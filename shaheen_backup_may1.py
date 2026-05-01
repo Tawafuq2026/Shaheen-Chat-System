@@ -9,9 +9,7 @@ st.markdown("---")
 # ربط المحرك مباشرة بالمفتاح الجديد لتجاوز خطأ 401
 client = openai.OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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"
-)
-
+api_key="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"
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
