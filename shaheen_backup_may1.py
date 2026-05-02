@@ -4,7 +4,7 @@ import openai
 # إعدادات الواجهة (شاهين شات - النسخة العالمية الشاملة)
 st.set_page_config(page_title="شاهين شات", page_icon="🦅", layout="wide")
 
-# تصميم واتساب المطور: إرسال يمين ورد يسار
+# تصحيح الخطأ: استخدام unsafe_allow_html=True بدلاً من unsafe_allow_index
 st.markdown("""
     <style>
     .main { background-color: #e5ddd5; } 
@@ -13,10 +13,10 @@ st.markdown("""
     [data-testid="stChatMessage"]:nth-child(odd) { background-color: #ffffff; margin-right: auto; text-align: left; }
     .stTitle { text-align: right; color: #075e54; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     </style>
-    """, unsafe_allow_index=True)
+    """, unsafe_allow_html=True)
 
-st.markdown('<h1 class="stTitle">🦅 شاهين شات</h1>', unsafe_allow_index=True)
-st.markdown('<div style="text-align: right; font-style: italic; color: #075e54;">"العلم نورٌ وفي كفي ضياؤه.. أرنو بعينٍ لا تخطئ الهدفا"</div>', unsafe_allow_index=True)
+st.markdown('<h1 class="stTitle">🦅 شاهين شات</h1>', unsafe_allow_html=True)
+st.markdown('<div style="text-align: right; font-style: italic; color: #075e54;">"العلم نورٌ وفي كفي ضياؤه.. أرنو بعينٍ لا تخطئ الهدفا"</div>', unsafe_allow_html=True)
 st.markdown("---")
 
 client = openai.OpenAI(
@@ -33,9 +33,9 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# نظام الربح الجديد: 5 رسائل مجانية ثم 12 ريالاً
+# نظام الربح الجديد: 5 رسائل مجانية ثم 12 ريالاً لضمان ROI
 if st.session_state.msg_count < 5:
-    if prompt := st.chat_input("تحدث مع شاهين... العلم نور (لديك 5 رسائل مجانية)"):
+    if prompt := st.chat_input("تحدث مع شاهين... العلم نور"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.session_state.msg_count += 1
         with st.chat_message("user"):
@@ -55,4 +55,4 @@ else:
     st.warning("⚠️ لقد استهلكت محاولاتك المجانية الخمس.")
     st.info("للاستمرار في استخدام 'شاهين شات'، اشترك الآن بـ 12 ريالاً فقط.")
     pay_url = "https://paypal.me/MOHDSHAHEEN"
-    st.markdown(f'<a href="{pay_url}" target="_blank"><button style="width:100%; height:60px; background-color:#FFD700; color:#001f3f; border:none; border-radius:12px; cursor:pointer; font-size:18px; font-weight:bold;">تفعيل الاشتراك بـ 12 ريال عبر PayPal</button></a>', unsafe_allow_index=True)
+    st.markdown(f'<a href="{pay_url}" target="_blank"><button style="width:100%; height:60px; background-color:#FFD700; color:#001f3f; border:none; border-radius:12px; cursor:pointer; font-size:18px; font-weight:bold;">تفعيل الاشتراك بـ 12 ريال عبر PayPal</button></a>', unsafe_allow_html=True)
