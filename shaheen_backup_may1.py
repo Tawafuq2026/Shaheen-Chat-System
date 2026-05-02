@@ -4,7 +4,7 @@ import openai
 # إعدادات الواجهة العالمية (شاهين شات)
 st.set_page_config(page_title="شاهين شات", page_icon="🦅", layout="wide")
 
-# تصميم واتساب المطور: إرسال يمين (أخضر) ورد يسار (أبيض) مع خلفية واتساب
+# تصميم واتساب المطور: إرسال يمين ورد يسار مع خلفية واتساب
 st.markdown("""
     <style>
     .main { background-color: #e5ddd5; } 
@@ -14,28 +14,25 @@ st.markdown("""
         background-color: #dcf8c6; 
         margin-left: auto; 
         text-align: right; 
-        direction: rtl;
     }
     /* رد شاهين الذكي - جهة اليسار */
     [data-testid="stChatMessage"]:nth-child(odd) { 
         background-color: #ffffff; 
         margin-right: auto; 
         text-align: left; 
-        direction: rtl;
     }
     .stTitle { text-align: right; color: #075e54; font-family: 'Arial', sans-serif; font-weight: bold; }
-    .quote-text { text-align: right; font-size: 18px; color: #075e54; font-weight: bold; margin-bottom: 20px; }
+    .quote-text { text-align: right; font-size: 22px; color: #000000; font-weight: bold; margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# الهوية البصرية: اسم المنصة والشعار المرفق
+# الهوية البصرية واسم المنصة
 st.markdown('<h1 class="stTitle">🦅 شاهين شات</h1>', unsafe_allow_html=True)
-# عرض الشعار "العلم نور" بخط واضح وغير مائل كما طلبت
 st.markdown('<div class="quote-text">العلم نورٌ وفي كفي ضياؤه</div>', unsafe_allow_html=True)
-
 st.markdown("---")
 
-# الربط العالمي (الذي يجمع DeepSeek, GPT-4, Claude, Gemini)
+# الربط العالمي المباشر (تصحيح المحرك ليتجاوز خطأ 401)
+# ملاحظة: تم تحديث الرابط لضمان التعرف على المستخدم فوراً
 client = openai.OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key="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"
@@ -46,7 +43,7 @@ if "messages" not in st.session_state:
 if "msg_count" not in st.session_state:
     st.session_state.msg_count = 0
 
-# عرض المحادثة بنمط واتساب
+# عرض المحادثة بنمط واتساب (يمين ويسار)
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
@@ -61,10 +58,14 @@ if st.session_state.msg_count < 5:
         
         with st.chat_message("assistant"):
             try:
-                # استدعاء المحرك العالمي الموحد
+                # استخدام محرك مستقر لتجاوز أخطاء الهوية
                 response = client.chat.completions.create(
                     model="google/gemini-2.0-flash-001",
-                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                    extra_headers={
+                        "HTTP-Referer": "https://github.com/Tawafuq2026/Shaheen-Chat-System",
+                        "X-Title": "Shaheen Chat"
+                    }
                 )
                 res_content = response.choices[0].message.content
                 st.markdown(res_content)
