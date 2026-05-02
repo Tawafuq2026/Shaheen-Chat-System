@@ -1,15 +1,18 @@
 import streamlit as st
 import openai
 
-# إعدادات الواجهة العالمية
+# إعدادات الواجهة العالمية لشاهين شات
 st.set_page_config(page_title="شاهين شات - المنصة العالمية", page_icon="🌐")
 st.title("🌐 شاهين شات: منصة الذكاء الاصطناعي الشاملة")
 st.markdown("---")
 
-# ربط المحرك مباشرة بالمفتاح الجديد لتجاوز خطأ 401
+# ربط المحرك مباشرة بالمفتاح الجديد المفعّل والمشحون بـ 10 دولارات
 client = openai.OpenAI(
     base_url="https://openrouter.ai/api/v1",
-api_key="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"
+    api_key="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"
+)
+
+# إدارة سجل المحادثات
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -17,6 +20,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+# استقبال وإرسال الرسائل
 if prompt := st.chat_input("اسأل شاهين عن أي شيء..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
