@@ -20,12 +20,11 @@ st.markdown('<h1 class="stTitle">🦅 شاهين شات</h1>', unsafe_allow_html
 st.markdown('<div class="quote-text">العلم نورٌ وفي كفي ضياؤه</div>', unsafe_allow_html=True)
 st.markdown("---")
 
-# 2. سحب المفتاح وتنظيفه (الإصلاح الجذري للخطأ 401)
-# هنا قمنا بإضافة نظام تنظيف (replace) لحذف أي "نزول سطر" قد يكون حدث في الخزنة
+# 2. جلب المفتاح بأمان تام (الإصلاح الجذري)
 try:
+    # جلب المفتاح وتنظيفه من أي مسافات زائدة
     raw_key = st.secrets["OPENROUTER_API_KEY"]
-    # تنظيف المفتاح من أي رموز مخفية أو نزول سطر بصري
-    API_KEY = raw_key.replace("\n", "").replace("\r", "").strip()
+    API_KEY = raw_key.strip().replace('"', '').replace("'", "")
 except Exception:
     st.error("تنبيه: المفتاح غير موجود في الخزنة السرية (Secrets).")
     st.stop()
@@ -39,7 +38,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 3. نظام الربح (5 رسائل مجانية ثم اشتراك 12 ريال قطري)
+# 3. نظام التشغيل والربح (5 رسائل مجانية ثم اشتراك 12 ريال قطري)
 if st.session_state.msg_count < 5:
     if prompt := st.chat_input("تحدث مع شاهين العالمي... العلم نور"):
         st.session_state.messages.append({"role": "user", "content": prompt})
@@ -48,28 +47,28 @@ if st.session_state.msg_count < 5:
             st.markdown(prompt)
         
         with st.chat_message("assistant"):
+            # الرابط النظيف تماماً بدون أي مسافات
+            url = "https://openrouter.ai/api/v1/chat/completions"
             headers = {
                 "Authorization": f"Bearer {API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "[https://github.com/Tawafuq2026/Shaheen-Chat-System](https://github.com/Tawafuq2026/Shaheen-Chat-System)"
+                "Content-Type": "application/json"
             }
             payload = {
                 "model": "google/gemini-2.0-flash-001",
                 "messages": [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
             }
             try:
-                response = requests.post("[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)", headers=headers, data=json.dumps(payload), timeout=30)
+                # استخدام الرابط النظيف المباشر
+                response = requests.post(url.strip(), headers=headers, data=json.dumps(payload), timeout=30)
                 if response.status_code == 200:
                     res_content = response.json()['choices'][0]['message']['content']
                     st.markdown(res_content)
                     st.session_state.messages.append({"role": "assistant", "content": res_content})
                 else:
-                    # رسالة تشخيصية احترافية في حال استمرار الرفض من المزود
-                    st.error(f"تنبيه تقني ({response.status_code}): المفتاح في الخزنة غير صالح حالياً.")
-                    st.info("يا سيد محمد، يرجى التأكد من رصيدك في OpenRouter أو إنشاء مفتاح جديد تماماً.")
+                    st.error(f"تنبيه تقني ({response.status_code}): المزود يرفض المفتاح. تأكد من رصيدك.")
             except Exception as e:
                 st.error(f"عطل في الاتصال: {e}")
 else:
     st.warning("⚠️ انتهت محاولاتك المجانية.")
-    st.info("اشترك بـ 12 ريالاً قطرياً لاستمرار الخدمة.")
-    st.markdown(f'<a href="[https://paypal.me/MOHDSHAHEEN](https://paypal.me/MOHDSHAHEEN)" target="_blank"><button style="width:100%; background-color:#FFD700; border-radius:10px; cursor:pointer; font-weight:bold;">تفعيل الاشتراك (12 ريال)</button></a>', unsafe_allow_html=True)
+    st.info("للاستمرار، اشترك بـ 12 ريالاً قطرياً.")
+    st.markdown(f'<a href="https://paypal.me/MOHDSHAHEEN" target="_blank"><button style="width:100%; height:50px; background-color:#FFD700; border-radius:10px; cursor:pointer;">تفعيل الاشتراك (12 ريال)</button></a>', unsafe_allow_html=True)
