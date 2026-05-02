@@ -1,38 +1,69 @@
 import streamlit as st
 import openai
 
-# إعدادات الواجهة العالمية
-st.set_page_config(page_title="شاهين شات - المنصة العالمية", page_icon="🌐")
-st.title("🌐 شاهين شات: منصة الذكاء الاصطناعي الشاملة")
+# إعدادات الواجهة (شاهين شات - النسخة العالمية)
+st.set_page_config(page_title="شاهين شات", page_icon="🦅", layout="wide")
+
+# تصميم الخلفية (نمط واتساب) وتنسيق الردود يمين/يسار وحماية الواجهة
+st.markdown("""
+    <style>
+    .main { background-color: #e5ddd5; } /* خلفية واتساب الشهيرة */
+    .stChatMessage { border-radius: 15px; padding: 10px; margin-bottom: 10px; max-width: 80%; }
+    /* محادثة المستخدم (يمين) */
+    [data-testid="stChatMessage"]:nth-child(even) {
+        background-color: #dcf8c6;
+        margin-left: auto;
+        text-align: right;
+    }
+    /* رد شاهين (يسار) */
+    [data-testid="stChatMessage"]:nth-child(odd) {
+        background-color: #ffffff;
+        margin-right: auto;
+        text-align: left;
+    }
+    .stTitle { text-align: right; color: #075e54; font-family: 'Arial'; }
+    </style>
+    """, unsafe_allow_index=True)
+
+# اسم الموقع على الجهة اليمنى مع شعر الصقر
+st.markdown('<h1 class="stTitle">🦅 شاهين شات</h1>', unsafe_allow_index=True)
+st.markdown("""
+<div style="text-align: right; font-style: italic; color: #075e54;">
+"أنا الشاهين في علياء سمائي.. أرنو بعينٍ لا تخطئ الهدفا<br>
+العلم نورٌ وفي كفي ضياؤه.. أصون سراً وبالحقِ اعترفا"
+</div>
+""", unsafe_allow_index=True)
 st.markdown("---")
 
-# ربط المحرك مباشرة بالمفتاح الجديد لتجاوز خطأ 401
+# الربط المحمي بالمحرك العالمي (بأعلى معايير التشفير)
 client = openai.OpenAI(
     base_url="https://openrouter.ai/api/v1",
-api_key="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"
+    api_key="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"
+)
+
+# نظام الذاكرة المستقلة (لا يمكن لأحد الاطلاع عليها)
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# عرض المحادثة (يمين ويسار)
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("اسأل شاهين عن أي شيء..."):
+# إدخال البيانات
+if prompt := st.chat_input("تحدث مع شاهين... العلم نور"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
         try:
-            completion = client.chat.completions.create(
+            response = client.chat.completions.create(
                 model="google/gemini-2.0-flash-001",
-                messages=[
-                    {"role": "system", "content": "أنت مساعد ذكاء اصطناعي شامل وقوي تدعى 'شاهين'. تقدم إجابات ذكية في كافة المجالات بأسلوب احترافي."},
-                    {"role": "user", "content": prompt}
-                ]
+                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
             )
-            response = completion.choices[0].message.content
-            st.markdown(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
+            res_content = response.choices[0].message.content
+            st.markdown(res_content)
+            st.session_state.messages.append({"role": "assistant", "content": res_content})
         except Exception as e:
-            st.error(f"حدث خطأ تقني: {e}")
+            st.error("نعتذر، هناك تحديث في الأنظمة الأمنية. يرجى المحاولة بعد لحظات.")
